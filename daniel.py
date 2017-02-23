@@ -20,3 +20,19 @@ def fonction ():
 # opt 2 : trier par rapport à la taille
 # opt 3 : trier par rapport à la latence
 # opt 4 : remplir les caches les moins remplit
+
+def output():
+    global caches
+    nb_caches = 0
+    for cache in caches :
+        if cache['videos']:
+            nb_caches ++;
+    print str(nb_caches)
+    for idcache in range(0,len(caches)) :
+        if caches[idcache]['videos']:
+            print "\n"+ str(idcache)
+            for video in caches[idcache]['videos']:
+                print " "+ str(video)
+            
+        
+        
