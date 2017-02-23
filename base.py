@@ -50,11 +50,16 @@ def start():
 
 def fonction ():
     global videos,caches, requests, endpoints 
+
+    # Optimizations 
+    requests.sort(key = lambda tup : tup[2])
+    opt_latence_endpoint() # optimise par les latences
+
     for req in range(0,len(requests)):
         taille_vid = videos[requests[req][0]] 
         idendpoint = requests[req][1]
         endpoint = endpoints[idendpoint]
-    
+         
 
         ispresent = False
         for idcache, latcache in endpoint['caches']:
@@ -67,7 +72,6 @@ def fonction ():
         
         for idcache, latcache in endpoint['caches']:
             cache = caches[idcache]
-            #print (requests[req][0], taille_vid, idcache, cache['freespace'])
             if (cache['freespace'] >= taille_vid):
                 caches[idcache]['videos'].append(requests[req][0])
                 caches[idcache]['freespace'] -= taille_vid
@@ -75,20 +79,6 @@ def fonction ():
         
 
 
-def optimisation1 ():
-    global videos,caches, requests, endpoints 
-    requests.sort(key = lambda tup : tup[2])
-    for req in range(0,len(requests)):
-        taille_vid = videos[req[0]] 
-        idendpoint = req[1]
-        endpoint = endpoints[idendpoint]
-        
-        for idcache in endpoint['caches'][0] :
-            cache = caches[idcache]
-            if (cache['freespace'] >= taille_vid) :
-                caches[idcache]['videos'].append(req[0])
-                caches[idcache]['freespace'] -= taille_vid
-                break
 
 def opt_latence_endpoint():
     global endpoints
@@ -97,23 +87,6 @@ def opt_latence_endpoint():
     
     
     
-def optimisation2 ():
-    global videos,caches, requests, endpoints 
-    requests.sort(key = lambda tup : tup[2]) #
-    
-    opt_latence_endpoint() # optimise par les latences
-    
-    for req in range(0,len(requests)):
-        taille_vid = videos[req[0]] 
-        idendpoint = req[1]
-        endpoint = endpoints[idendpoint]
-        
-        for idcache in endpoint['caches'][0] :
-            cache = caches[idcache]
-            if (cache['freespace'] > taille_vid) :
-                caches[idcache]['videos'].append(req[0])
-                caches[idcache]['freespace'] -= taille_vid
-                break
         
 def output():
     global caches
