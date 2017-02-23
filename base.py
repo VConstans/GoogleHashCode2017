@@ -24,7 +24,7 @@ def start():
         videos = [int(n) for n in myfile.readline().split()]
 
         # Init caches
-        caches = ncaches*[{'videos':[], 'freespace': capcaches}]
+        caches = [{'videos':[], 'freespace': capcaches} for i in range(0,capcaches)]
 
         # Read endpoints
         for i in range(0,nendpoints):
@@ -54,10 +54,21 @@ def fonction ():
         taille_vid = videos[requests[req][0]] 
         idendpoint = requests[req][1]
         endpoint = endpoints[idendpoint]
-       
+    
+
+        ispresent = False
+        for idcache, latcache in endpoint['caches']:
+            if requests[req][0] in caches[idcache]['videos']:
+                ispresent = True
+                break
+        
+        if ispresent:
+            continue
+        
         for idcache, latcache in endpoint['caches']:
             cache = caches[idcache]
-            if (cache['freespace'] > taille_vid) :
+            #print (requests[req][0], taille_vid, idcache, cache['freespace'])
+            if (cache['freespace'] >= taille_vid):
                 caches[idcache]['videos'].append(requests[req][0])
                 caches[idcache]['freespace'] -= taille_vid
                 break
@@ -74,7 +85,7 @@ def optimisation1 ():
         
         for idcache in endpoint['caches'][0] :
             cache = caches[idcache]
-            if (cache['freespace'] > taille_vid) :
+            if (cache['freespace'] >= taille_vid) :
                 caches[idcache]['videos'].append(req[0])
                 caches[idcache]['freespace'] -= taille_vid
                 break
