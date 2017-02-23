@@ -35,12 +35,92 @@ def start():
                 idcache, latcache = [int(n) for n in myfile.readline().split()]
                 endpoint['caches'].append((idcache, latcache))
 
+            endpoints.append(endpoint)
+
         # Read requests
         for i in range(0,nreqdesc):
             idvideo, idendpoint, nbrequests = [int(n) for n in myfile.readline().split()]
             requests.append((idvideo, idendpoint, nbrequests))
 
+    # Launch
+    fonction()
+    output()
+
     
 
+def fonction ():
+    global videos,caches, requests, endpoints 
+    for req in range(0,len(requests)):
+        taille_vid = videos[requests[req][0]] 
+        idendpoint = requests[req][1]
+        endpoint = endpoints[idendpoint]
+       
+        for idcache, latcache in endpoint['caches']:
+            cache = caches[idcache]
+            if (cache['freespace'] > taille_vid) :
+                caches[idcache]['videos'].append(requests[req][0])
+                caches[idcache]['freespace'] -= taille_vid
+                break
+        
+
+
+def optimisation1 ():
+    global videos,caches, requests, endpoints 
+    requests.sort(key = lambda tup : tup[2])
+    for req in range(0,len(requests)):
+        taille_vid = videos[req[0]] 
+        idendpoint = req[1]
+        endpoint = endpoints[idendpoint]
+        
+        for idcache in endpoint['caches'][0] :
+            cache = caches[idcache]
+            if (cache['freespace'] > taille_vid) :
+                caches[idcache]['videos'].append(req[0])
+                caches[idcache]['freespace'] -= taille_vid
+                break
+
+def opt_latence_endpoint():
+    global endpoints
+    for idendpoint in range(0,len(endpoints)):
+        endpoints[idendpoint]['caches'].sort( key = lambda tup : tup[1] ) 
+    
+    
+    
+def optimisation2 ():
+    global videos,caches, requests, endpoints 
+    requests.sort(key = lambda tup : tup[2]) #
+    
+    opt_latence_endpoint() # optimise par les latences
+    
+    for req in range(0,len(requests)):
+        taille_vid = videos[req[0]] 
+        idendpoint = req[1]
+        endpoint = endpoints[idendpoint]
+        
+        for idcache in endpoint['caches'][0] :
+            cache = caches[idcache]
+            if (cache['freespace'] > taille_vid) :
+                caches[idcache]['videos'].append(req[0])
+                caches[idcache]['freespace'] -= taille_vid
+                break
+        
+def output():
+    global caches
+    nb_caches = 0
+    for cache in caches :
+        if cache['videos']:
+            nb_caches += 1
+
+    print nb_caches
+
+    for idcache in range(0,len(caches)) :
+        if caches[idcache]['videos']:
+            print idcache,
+            for video in caches[idcache]['videos']:
+                print video,
+            print ''
+            
+        
+        
   
 start()
